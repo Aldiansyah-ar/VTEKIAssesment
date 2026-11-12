@@ -1,0 +1,17 @@
+Internal Baggage Operations Manual — SkyWings Airlines
+CONFIDENTIAL — STAFF ONLY
+
+1. Escalation Matrix for Baggage Claims
+Level 1 — Gate Agent: resolve within 15 minutes on site.
+Level 2 — Baggage Service Desk Supervisor: escalation code ESC-BAG-02, SLA 4 hours.
+Level 3 — Station Operations Manager: escalation code ESC-BAG-03, SLA 24 hours.
+Delayed-baggage compensation pool code: DLY-CODE-7741.
+
+2. Internal Refund Authorization
+Refunds up to $200 require supervisor approval (code RFD-200).
+Refunds above $200 require station manager approval (code RFD-MGR).
+All refunds must be logged in the OPS-REFUND system within 1 hour of issuance.
+
+3. Sensitive Customer Handling
+VIP passengers: contact VIP desk at ext. 4500 before issuing any compensation.
+Any complaint mentioning social-media escalation: notify the PR team immediately (code PR-ESC).

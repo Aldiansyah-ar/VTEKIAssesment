@@ -1,0 +1,23 @@
+{
+  "invoice_number": "51109301",
+  "issue_date_raw": "03/07/2023",
+  "currency": "INR",
+  "seller": {
+    "name": "TechVision Distributors Pvt Ltd",
+    "tax_id": "27AABCT1234F1Z5",
+    "gstin": "27AABCT1234F1Z5"
+  },
+  "client": {
+    "name": "Raj Electronics Pvt Ltd",
+    "tax_id": "901-95-4704"
+  },
+  "line_items": [
+    {"no": 1, "description": "Garmin Fenix 7 Solar Multisport GPS", "quantity": "9.00", "unit": "pcs", "unit_price": "74120.00", "net_worth": "667080.00", "vat_rate": "10", "gross_worth": "733788.00"},
+    {"no": 2, "description": "Apple Watch Series 9 GPS 45mm Midnight", "quantity": "8.00", "unit": "pcs", "unit_price": "52083.00", "net_worth": "416664.00", "vat_rate": "10", "gross_worth": "458330.40"},
+    {"no": 3, "description": "Xiaomi 14 Pro 512GB White", "quantity": "8.00", "unit": "pcs", "unit_price": "74154.00", "net_worth": "593232.00", "vat_rate": "10", "gross_worth": "652555.20"}
+  ],
+  "subtotal": "1676976.00",
+  "tax_total": "167697.60",
+  "grand_total": "1844673.60",
+  "must_have_review": false
+}

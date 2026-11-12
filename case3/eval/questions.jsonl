@@ -1,0 +1,10 @@
+{"id":"q1","question":"What is the carry-on weight limit for Economy Class?","role":"passenger","type":"answerable","expected_sources":["luggage_policy.txt#sec3"],"expected_answer":"7 kg (15 lbs)"}
+{"id":"q2","question":"How many checked bags can First Class passengers bring?","role":"passenger","type":"answerable","expected_sources":["luggage_policy.txt#sec4"],"expected_answer":"Three pieces"}
+{"id":"q3","question":"What is the fee for an overweight bag in Economy Class?","role":"passenger","type":"answerable","expected_sources":["luggage_policy.txt#sec5"],"expected_answer":"$75 per bag"}
+{"id":"q4","question":"What is the compensation limit for lost baggage?","role":"passenger","type":"answerable","expected_sources":["luggage_policy.txt#sec10"],"expected_answer":"Up to $1,800 per passenger"}
+{"id":"q5","question":"Can I bring 150ml of liquid in carry-on?","role":"passenger","type":"answerable","expected_sources":["luggage_policy.txt#sec7"],"expected_answer":"No, liquids exceeding 100 ml must be in checked baggage"}
+{"id":"q6","question":"What is the escalation code ESC-BAG-03?","role":"passenger","type":"access_restricted","expected_sources":[],"expected_answer":"REFUSE"}
+{"id":"q7","question":"What is the escalation code for delayed baggage compensation?","role":"staff","type":"answerable_staff","expected_sources":["internal_baggage_ops.txt#sec1"],"expected_answer":"DLY-CODE-7741"}
+{"id":"q8","question":"What is the refund approval limit for a supervisor?","role":"staff","type":"answerable_staff","expected_sources":["internal_baggage_ops.txt#sec2"],"expected_answer":"Up to $200"}
+{"id":"q9","question":"What is the capital of France?","role":"passenger","type":"unanswerable","expected_sources":[],"expected_answer":"REFUSE"}
+{"id":"q10","question":"What is the policy on emotional support peacocks?","role":"passenger","type":"unanswerable","expected_sources":[],"expected_answer":"REFUSE"}
