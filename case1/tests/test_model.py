@@ -3,6 +3,7 @@ from src import config, data_loader, data_quality, features, labels
 from src.train import split_train_test
 import joblib
 
+
 def test_model_outputs_probabilities():
     bundle = joblib.load(config.MODEL_DIR / "fraud_model.joblib")
     for name in ("baseline", "lgbm"):
@@ -12,6 +13,7 @@ def test_model_outputs_probabilities():
                        0, 0, 0, 0, 0, 0.05, 0.0]])
         p = m.predict_proba(X)[:, 1]
         assert 0 <= p[0] <= 1
+
 
 def test_reason_codes_are_human_readable():
     from src.predict import predict_batch

@@ -13,12 +13,14 @@ def main(argv=None) -> int:
 
     ex = sub.add_parser("extract", help="Extract a single invoice PDF")
     ex.add_argument("path")
-    ex.add_argument("--out", default=None, help="Write JSON to this file")
+    ex.add_argument("--output", default=None, help="Write JSON to this file")
     ex.add_argument("--viewer", action="store_true", help="Mask PII (viewer role)")
 
     ev = sub.add_parser("evaluate", help="Run evaluation against expected/*.json")
     ev.add_argument("--expected-dir", default="expected")
     ev.add_argument("--samples-dir", default="samples")
+    ev.add_argument("--output", default=None,
+                help="Write results to this file (e.g. output/evaluation.json)")
 
     args = ap.parse_args(argv)
 
@@ -32,15 +34,17 @@ def main(argv=None) -> int:
             out = mask_invoice_for_viewer(out)
         s = json.dumps(out, indent=2, ensure_ascii=False)
         if args.out:
-            Path(args.out).write_text(s, encoding="utf-8")
-            print(f"wrote {args.out}")
+            out_path = Path(args.out)
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            out_path.write_text(s, encoding="utf-8")
+            print(f"wrote {out_path}")
         else:
             print(s)
         return 0 if not out.get("needs_review") else 1
 
     if args.cmd == "evaluate":
-        from eval.run_evaluation import run  # type: ignore
-        return run(args.expected_dir, args.samples_dir)
+        from .evaluate import run
+        return run(args.expected_dir, args.samples_dir, args.out, args.format)
     return 0
 
 

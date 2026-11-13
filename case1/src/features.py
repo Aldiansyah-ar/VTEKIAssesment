@@ -18,7 +18,6 @@ def build_features(tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
 
     t = t[t["TransactionDate"] < cutoff].copy()
 
-    # ── Originator-side aggregate features ──────────────────────────────
     grp = t.groupby("AccountOriginID")
     feats = pd.DataFrame({
         "n_out_tx":        grp.size(),
@@ -35,7 +34,6 @@ def build_features(tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
     feats["active_days"] = (feats["last_tx"] - feats["first_tx"]).dt.days.clip(lower=0)
     feats["tx_per_day"]  = feats["n_out_tx"] / feats["active_days"].clip(lower=1)
 
-    # ── Behavioural ratios ──────────────────────────────────────────────
     t2 = t.assign(
         hour = t["TransactionDate"].dt.hour,
         is_odd = t["TransactionDate"].dt.hour.between(0, 5),
@@ -46,8 +44,6 @@ def build_features(tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
     feats["round_amount_ratio"] = g2["is_round"].mean()
 
     feats = feats.reset_index().rename(columns={"AccountOriginID": "AccountID"})
-
-    # ── Join account + customer context ─────────────────────────────────
     feats = feats.merge(a, on="AccountID", how="left")
     feats = feats.merge(c, on="CustomerID", how="left")
 
@@ -55,7 +51,6 @@ def build_features(tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
     feats["age"] = ((cutoff - feats["DateOfBirth"]).dt.days / 365.25)
     feats["age"] = feats["age"].fillna(feats["age"].median())
 
-    # ── Loan aggregates ────────────────────────────────────────────────
     loans_agg = l.groupby("AccountID").agg(
         n_loans            = ("LoanID", "count"),
         total_principal    = ("PrincipalAmount", "sum"),
@@ -68,7 +63,6 @@ def build_features(tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
                 "max_interest", "has_suspended_loan"]:
         feats[col] = feats[col].fillna(0.0)
 
-    # ── Ratio features ────────────────────────────────────────────────
     safe_bal = feats["Balance"].replace(0, np.nan)
     feats["amt_to_balance_ratio"] = (feats["mean_out_amt"] / safe_bal)\
                                         .replace([np.inf, -np.inf], np.nan).fillna(0)

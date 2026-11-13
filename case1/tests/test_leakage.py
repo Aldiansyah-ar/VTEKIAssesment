@@ -1,6 +1,7 @@
 import pandas as pd
 from src import config, data_loader, data_quality, features, labels
 
+
 def test_no_future_transactions_in_features():
     """Post-cutoff transactions must not influence feature values."""
     tables = data_quality.clean(data_loader.load_all())

@@ -1,12 +1,3 @@
-"""Optional LLM extraction path.
-
-DESIGN NOTES (Privacy by Design):
-- Disabled by default (env ENABLE_LLM_EXTRACTION must be "1").
-- When enabled, the payload is masked BEFORE sending (see masking.mask_id).
-- The exact payload that would leave the environment is logged to a local audit file
-  (audit/llm_payload.jsonl) so reviewers can verify.
-- The default regex path is 100% offline; no data leaves the host.
-"""
 from __future__ import annotations
 import os
 import json

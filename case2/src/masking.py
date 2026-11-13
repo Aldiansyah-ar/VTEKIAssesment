@@ -16,7 +16,6 @@ def mask_invoice_for_viewer(inv_jsonable: dict) -> dict:
             if party.get(key):
                 party[key] = mask_id(party[key])
         if party.get("name"):
-            # Mask name: keep first 3 chars and last 2 chars
             n = party["name"]
             party["name"] = (n[:3] + "*" * max(0, len(n) - 5) + n[-2:]) if len(n) > 6 else "*" * len(n)
         out[role] = party

@@ -99,5 +99,4 @@ def extract_invoice(path: str | Path) -> dict:
     return out
 
 
-# --- Errors re-exported for CLI/API ----------------------------------------
 __all__ = ["extract_invoice", "UnsupportedFileError", "FileTooLargeError"]

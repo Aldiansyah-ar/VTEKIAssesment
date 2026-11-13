@@ -1,8 +1,10 @@
 import hashlib
 import pandas as pd
 
+
 def pseudonymize(value: str, salt: str = "v-teki-demo-salt") -> str:
     return hashlib.sha256((salt + str(value)).encode()).hexdigest()[:16]
+
 
 def mask_pii(df: pd.DataFrame, keep: list[str]) -> pd.DataFrame:
     """Drop / hash all PII columns except the ones in `keep`."""
@@ -14,6 +16,7 @@ def mask_pii(df: pd.DataFrame, keep: list[str]) -> pd.DataFrame:
         if col in out.columns:
             out[col] = out[col].map(pseudonymize)
     return out
+
 
 def safe_log(record: dict) -> dict:
     """Redact PII before writing to logs."""

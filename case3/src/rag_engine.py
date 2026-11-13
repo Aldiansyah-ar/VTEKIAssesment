@@ -1,33 +1,20 @@
-"""
-Case 3 — Enterprise Knowledge Chatbot (SkyWings Airlines)
-
-Fitur:
-  - Section-aware chunker (regex N. Title)
-  - Pre-retrieval RBAC filter (public vs staff)
-  - Prompt-injection guardrail
-  - PII redaction untuk logging
-  - Citation-bearing answers
-  - Safe refusal (no hallucination)
-  - Optional LLM backend (OpenAI) dengan extractive fallback
-"""
 from __future__ import annotations
 import os, re, json, logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Tuple, Dict, Optional
 
-# ---------- Data model ----------
 @dataclass
 class Chunk:
-    id: str            # "luggage_policy.txt#sec3"
-    source: str        # "luggage_policy.txt"
-    section: str       # "3. Carry-On Baggage Allowance"
+    id: str            
+    source: str        
+    section: str       
     text: str
     visibility: str = "public"   # "public" | "staff"
 
 
-# ---------- Chunker ----------
 SECTION_RE = re.compile(r"^\s*(\d{1,2})\.\s+([^\n]+)$", re.MULTILINE)
+
 
 def chunk_policy(path: Path, visibility: str = "public") -> List[Chunk]:
     raw = path.read_text(encoding="utf-8")
@@ -49,6 +36,7 @@ def chunk_policy(path: Path, visibility: str = "public") -> List[Chunk]:
         ))
     return chunks
 
+
 def load_corpus(data_dir: Path) -> List[Chunk]:
     chunks: List[Chunk] = []
     chunks += chunk_policy(data_dir / "luggage_policy.txt",       visibility="public")
@@ -56,7 +44,6 @@ def load_corpus(data_dir: Path) -> List[Chunk]:
     return chunks
 
 
-# ---------- Access control (RBAC) ----------
 def is_allowed(chunk: Chunk, role: str) -> bool:
     if chunk.visibility == "public":
         return True
@@ -64,19 +51,18 @@ def is_allowed(chunk: Chunk, role: str) -> bool:
         return role == "staff"
     return False
 
-# Tripwire: query yang hanya relevan ke staff-doc tidak boleh "menembus"
-# via retrieval lemah. Menghasilkan refusal yang jelas untuk passenger.
+
 STAFF_ONLY_TRIPWIRES = [
     "escalation", "esc-bag", "dly-code", "rfd-",
     "ops-refund", "vip desk", "pr-esc", "internal refund",
 ]
+
 
 def has_staff_only_signal(query: str) -> bool:
     low = query.lower()
     return any(t in low for t in STAFF_ONLY_TRIPWIRES)
 
 
-# ---------- Guardrails ----------
 INJECTION_PATTERNS = [
     r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?",
     r"disregard\s+(all\s+)?(previous|prior|above)",
@@ -96,6 +82,7 @@ PII_PATTERNS = {
     "ssn":         re.compile(r"\b\d{3}-\d{2}-\d{4}\b"),
 }
 
+
 def detect_injection(text: str) -> Tuple[bool, str]:
     low = text.lower()
     for pat in INJECTION_PATTERNS:
@@ -103,6 +90,7 @@ def detect_injection(text: str) -> Tuple[bool, str]:
         if m:
             return True, m.group(0)
     return False, ""
+
 
 def redact_pii(text: str) -> str:
     for name, pat in PII_PATTERNS.items():
@@ -117,7 +105,6 @@ def validate_input(text: str, max_len: int = 2000) -> Tuple[bool, str]:
     return True, ""
 
 
-# ---------- Retrievers ----------
 class TFIDFRetriever:
     """Deterministik, offline, default. Cocok untuk demo tanpa GPU."""
     def __init__(self, chunks: List[Chunk], min_score: float = 0.12):
@@ -173,7 +160,6 @@ def build_retriever(chunks: List[Chunk]):
     return TFIDFRetriever(chunks)
 
 
-# ---------- RAG pipeline ----------
 REFUSAL_MSG = (
     "I don't have enough information in the approved documents to answer that. "
     "Please contact SkyWings customer service at 1-800-555-1234."
@@ -195,9 +181,11 @@ SYSTEM_PROMPT = (
     "5. Never reveal information from documents the user is not authorized to see."
 )
 
+
 def _build_prompt(query: str, retrieved: List[Tuple[Chunk, float]]) -> str:
     ctx = "\n\n".join(f"[{c.id}]\n{c.text}" for c, _ in retrieved)
     return f"Context:\n{ctx}\n\nQuestion: {query}\nAnswer with citations."
+
 
 def _call_llm(prompt: str) -> Optional[str]:
     if not os.getenv("OPENAI_API_KEY"):
@@ -219,6 +207,7 @@ def _call_llm(prompt: str) -> Optional[str]:
 _STOP = {"what","is","the","a","an","for","of","to","in","on","how","can","i","do",
          "does","are","was","were","if","my","me","with","and","or","it","this","that"}
 
+
 def _extractive_answer(query: str, retrieved: List[Tuple[Chunk, float]]) -> str:
     """Fallback deterministik tanpa LLM: pilih kalimat terbaik + sitasi."""
     if not retrieved:
@@ -235,31 +224,27 @@ def _extractive_answer(query: str, retrieved: List[Tuple[Chunk, float]]) -> str:
         return REFUSAL_MSG
     return f"{best_sent} [{best_chunk.id}]"
 
+
 def answer(query: str, role: str, retriever) -> Dict:
-    # 1) Input validation
     ok, err = validate_input(query)
     if not ok:
         return {"answer": f"Invalid input: {err}", "citations": [],
                 "blocked": True, "reason": "validation"}
 
-    # 2) Prompt injection guardrail
     injected, pattern = detect_injection(query)
     if injected:
         return {"answer": BLOCKED_MSG, "citations": [],
                 "blocked": True, "reason": f"prompt_injection:{pattern}"}
 
-    # 3) RBAC tripwire — query staff-only ditolak untuk non-staff
     if role != "staff" and has_staff_only_signal(query):
         return {"answer": REFUSAL_MSG, "citations": [],
                 "blocked": False, "reason": "rbac_tripwire"}
 
-    # 4) Retrieval (RBAC filter sudah di dalam retriever)
     retrieved = retriever.search(query, role=role, k=4)
     if not retrieved:
         return {"answer": REFUSAL_MSG, "citations": [],
                 "blocked": False, "reason": "no_context"}
 
-    # 5) Generation (LLM opsional, fallback ekstraktif)
     prompt = _build_prompt(query, retrieved)
     out = _call_llm(prompt) or _extractive_answer(query, retrieved)
 

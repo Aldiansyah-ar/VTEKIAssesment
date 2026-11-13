@@ -1,6 +1,7 @@
 import pandas as pd
 from src import config
 
+
 def audit(tables: dict[str, pd.DataFrame]) -> dict:
     """Return documented data-quality issues. Used in report + as a test."""
     a, c, l, t = (tables["accounts"], tables["customers"],
@@ -30,17 +31,12 @@ def clean(tables: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
     max_valid = pd.Timestamp(config.MAX_VALID_DATE)
     t = tables["transactions"].copy()
 
-    # Drop transactions with no usable signal.
     t = t.dropna(subset=["TransactionDate", "Amount"])
-    # Duplicates → keep first occurrence.
     t = t.drop_duplicates(subset=["TransactionID"])
-    # Drop future timestamps (documented data-quality flag).
     t = t[t["TransactionDate"] <= max_valid]
-    # Amount must be > 0 (0-value transfers are noise).
     t = t[t["Amount"] > 0]
 
     tables = {**tables, "transactions": t}
-    # Keep only accounts referenced by customers and vice versa.
     tables["accounts"] = tables["accounts"].drop_duplicates("AccountID")
     tables["customers"] = tables["customers"].drop_duplicates("CustomerID")
     return tables

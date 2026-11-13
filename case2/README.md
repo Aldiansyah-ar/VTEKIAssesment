@@ -1,12 +1,13 @@
-# Case 2 — Document Intelligence (Invoice Extraction)
-
-Extracts structured invoice data from PDF with **offline regex parsing** (default) or
-opt-in LLM path. Structured JSON with confidence, review routing, and PII masking.
+# Case 2 — Document Intelligence
 
 ## Setup
-```bash
-python -m venv .venv && source .venv/bin/activate
+python -m venv env 
 pip install -r requirements.txt
-# place your uploaded invoice as:
-cp /path/to/invoice.pdf samples/invoice.pdf
-python scripts/make_synthetic_samples.py
+
+## Run
+python -m src.make_synthetic_samples.py                   # create the synthetic samples, writes in samples/
+python -m src.cli extract samples/invoice.pdf --output outputs/invoice.json   # extract data from invoice.pdf, writes in outputs/invoice.json
+python -m src.evaluate --output outputs/evaluation.json      # writes evaluate metric in outputs/evaluation.json
+
+## Tests
+pytest -q

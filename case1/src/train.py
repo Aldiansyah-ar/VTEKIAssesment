@@ -52,14 +52,12 @@ def main():
     print(f"Train: {X_tr.shape} positives={int(y_tr.sum())}")
     print(f"Test : {X_te.shape} positives={int(y_te.sum())}")
 
-    # Sanity: ensure we did not end up degenerate.
     if y_te.sum() == 0:
         raise RuntimeError(
             "Test set contains no positives. Increase positive_rate in "
             "labels.build_proxy_label or lower test_size."
         )
 
-    # ── Baseline: Logistic Regression ──────────────────────────────────
     baseline = Pipeline([
         ("impute", SimpleImputer(strategy="median")),
         ("scale",  StandardScaler()),
@@ -69,22 +67,20 @@ def main():
     ])
     baseline.fit(X_tr, y_tr)
 
-    # ── Alternative: LightGBM with scale_pos_weight ────────────────────
     pos = max(int(y_tr.sum()), 1)
     neg = int((y_tr == 0).sum())
     lgbm = LGBMClassifier(
         n_estimators=300,
         learning_rate=0.05,
-        num_leaves=15,                 # shallow: small n, avoid overfit
+        num_leaves=15,                 
         min_child_samples=10,
         scale_pos_weight=neg / pos,
         random_state=config.RANDOM_STATE,
-        n_jobs=1,                      # silence LOKY on Windows
+        n_jobs=1,                      
         verbose=-1,
     )
     lgbm.fit(X_tr, y_tr)
 
-    # ── Cross-validation for stable metric estimates ───────────────────
     cv = StratifiedKFold(n_splits=5, shuffle=True,
                          random_state=config.RANDOM_STATE)
     cv_scores = {
@@ -104,7 +100,7 @@ def main():
          "cv_scores": cv_scores},
         config.MODEL_DIR / "fraud_model.joblib",
     )
-    print("Model saved →", config.MODEL_DIR / "fraud_model.joblib")
+    print("Model saved", config.MODEL_DIR / "fraud_model.joblib")
 
 
 if __name__ == "__main__":

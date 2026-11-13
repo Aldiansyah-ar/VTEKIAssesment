@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import List
 from .schema import Invoice
 
-RECON_TOL = Decimal("0.01")  # 1 sen toleransi
+RECON_TOL = Decimal("0.01")
 
 
 def validate(inv: Invoice) -> tuple[List[str], List[str]]:
@@ -11,7 +11,6 @@ def validate(inv: Invoice) -> tuple[List[str], List[str]]:
     review: List[str] = []
     warn: List[str] = []
 
-    # Critical fields present
     if not inv.invoice_number:
         review.append("missing_invoice_number")
     if not inv.issue_date_raw:
@@ -25,12 +24,10 @@ def validate(inv: Invoice) -> tuple[List[str], List[str]]:
     if not inv.line_items:
         review.append("no_line_items")
 
-    # Any failed item
     for it in inv.line_items:
         if it.net_worth is None or it.gross_worth is None:
             review.append(f"line_item_invalid:{it.no}")
 
-    # Reconcile line items vs subtotal / totals
     if inv.line_items and all(it.net_worth is not None for it in inv.line_items):
         s = sum(it.net_worth for it in inv.line_items)
         if inv.subtotal is not None and abs(s - inv.subtotal) > RECON_TOL:

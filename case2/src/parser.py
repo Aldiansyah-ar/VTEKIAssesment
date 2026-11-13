@@ -72,7 +72,6 @@ def _normalize_date(raw: str) -> tuple[str, str]:
         c_i = int(c) if len(c) == 4 else 2000 + int(c)
     except ValueError:
         return raw, "UNKNOWN"
-    # Ambiguous if both <= 12
     if a_i <= 12 and b_i <= 12 and a_i != b_i:
         fmt = "DMY" if a_i <= 31 and b_i <= 12 else "MDY"
     else:
@@ -114,7 +113,6 @@ def parse_line_items(text: str) -> tuple[list[dict], list[str]]:
                 raw_items.append(current)
             current = {"no": int(m.group(1)), "raw": m.group(2)}
         elif current is not None and re.search(r"\d", line):
-            # Continuation of a malformed row (like the nested <tr> in the sample)
             current["raw"] += " " + line
 
     if current:
@@ -181,7 +179,6 @@ def parse_totals(text: str, tables: list[list[list[str]]]) -> dict:
         out["_source"] = "text"
         return out
 
-    # Fallback: last three INR amounts in the document
     inr = re.findall(rf"INR\s*([\d,]+\.\d{{2}})", text)
     if len(inr) >= 3:
         out["subtotal"] = _d(inr[-3])
@@ -191,7 +188,7 @@ def parse_totals(text: str, tables: list[list[list[str]]]) -> dict:
         out["_source"] = "inr_heuristic"
         return out
 
-    # Optional summary row without "Total" label
+
     m = re.search(
         rf"^\s*10%\s+([\d,]+\.\d{{2}})\s+([\d,]+\.\d{{2}})\s+([\d,]+\.\d{{2}})\s*$",
         text, re.M,

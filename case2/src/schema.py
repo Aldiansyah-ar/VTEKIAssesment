@@ -29,7 +29,7 @@ class Invoice(BaseModel):
     invoice_number: Optional[str] = None
     issue_date_raw: Optional[str] = None
     issue_date_iso: Optional[str] = None
-    date_format_assumed: Optional[str] = None  # "DMY" | "MDY" | None
+    date_format_assumed: Optional[str] = None
     currency: Optional[str] = None
     seller: Party = Field(default_factory=Party)
     client: Party = Field(default_factory=Party)

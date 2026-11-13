@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def build_proxy_label(feats: pd.DataFrame, positive_rate: float = 0.10) -> pd.Series:
     """
     PROXY LABEL — not ground truth fraud.

@@ -4,6 +4,7 @@ from src.predict import predict_batch
 
 app = FastAPI(title="V-TEKI Fraud Risk API", version="1.0.0")
 
+
 class Row(BaseModel):
     AccountID: int
     n_out_tx: float | None = None
@@ -30,6 +31,7 @@ class Row(BaseModel):
     has_suspended_loan: float | None = None
     amt_to_balance_ratio: float | None = None
     loan_to_balance_ratio: float | None = None
+
 
 @app.post("/score")
 def score(rows: list[Row]):

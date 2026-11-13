@@ -1,17 +1,15 @@
-# README — Case 3: Enterprise Knowledge Chatbot (SkyWings Airlines)
+# Case 3: Enterprise Knowledge Chatbot
 
-Chatbot internal berbasis **Retrieval-Augmented Generation (RAG)** yang menjawab pertanyaan karyawan/pelanggan hanya dari dokumen yang disetujui, dengan **sitasi wajib**, **penolakan aman** saat informasi tidak tersedia, **kontrol akses berbasis peran (RBAC)**, dan **guardrail terhadap prompt injection**.
-
-Knowledge base contoh menggunakan `luggage_policy.txt` (publik) dan `internal_baggage_ops.txt` (staff-only, sintetis) milik maskapai fiktif **SkyWings Airlines**.
-
----
-
-## ⚙️ Setup
-
-**Prasyarat:** Python 3.10+.
-
-```bash
-cd case3
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+## Setup
+python -m venv env 
 pip install -r requirements.txt
+
+## Run Chatbot
+python src/cli.py --role passenger                  # interactive mode
+python src/cli.py --role passenger --query "What is the carry-on weight limit for Economy Class?"   # single query
+python src/cli.py --role passenger --query "What is the escalation code ESC-BAG-03?" # Role-Based Access Control, if passenger ask about staff document then rejected
+python src/cli.py --role passenger --query "What is the carry-on weight limit for Economy Class?" --output-name outputs/results.json                  # writes in outputs/results.json
+python eval/evaluate.py --output-name outputs/evaluation.json   # writes evaluate metric in outputs/evaluation.json
+
+## Tests
+pytest -q
