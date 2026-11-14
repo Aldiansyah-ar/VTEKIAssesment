@@ -12,11 +12,11 @@ def _ensure_dir(path: Path) -> Path:
 def _save_json(output_dir: Path, name: str, payload: dict,
                add_timestamp: bool = False) -> Path:
     """
-    Simpan payload ke <output_dir>/<name>.json.
-
-    - Jika add_timestamp=True, sisipkan timestamp sebelum .json
-      → <name>_<YYYYmmdd_HHMMSS_micro>.json
-    - Jika name sudah berakhiran .json, ekstensi tidak digandakan.
+    Save payload to  <output_dir>/<name>.json.
+    
+    - If add_timestamp=True, insert a timestamp before .json
+        <name>_<YYYYmmdd_HHMMSS_micro>.json
+    - If name already ends with .json, the extension will not be duplicated.
     """
     _ensure_dir(output_dir)
 
@@ -41,27 +41,25 @@ def main():
     p.add_argument("--data-dir", default="data")
     p.add_argument("--role", default="passenger", choices=["passenger", "staff"])
     p.add_argument("--query", help="single-shot query")
-    p.add_argument("--output-dir", default="outputs",
-                   help="direktori output (default: outputs/)")
-    p.add_argument("--output-name", default=None,
-                   help="nama file output tanpa .json "
-                        "(default: query_<ts> atau session_<ts>)")
+    p.add_argument("--output-dir", default="outputs", help="output directory (default: outputs/)")
+    p.add_argument("--output-name", default="results",         
+                   help="filename output without .json, default: outputs/results.json")
     p.add_argument("--output-timestamp", action="store_true",
-                   help="tambahkan timestamp ke nama file agar tidak overwrite")
+                    help="Add a timestamp to the filename to prevent overwriting.")
     p.add_argument("--no-save", action="store_true",
-                   help="nonaktifkan penyimpanan output ke disk")
+                    help="disable saving output to disk")
     args = p.parse_args()
 
     chunks = load_corpus(Path(args.data_dir))
     retriever = build_retriever(chunks)
     print(f"[info] loaded {len(chunks)} chunks")
 
+
     if args.query:
         result = answer(args.query, args.role, retriever)
         print(json.dumps(result, indent=2))
 
         if not args.no_save:
-            name = args.output_name or "query"
             payload = {
                 "timestamp": datetime.now().isoformat(),
                 "mode": "single_query",
@@ -69,10 +67,11 @@ def main():
                 "query": args.query,
                 "result": result,
             }
-            fp = _save_json(Path(args.output_dir), name, payload,
+            fp = _save_json(Path(args.output_dir), args.output_name, payload,
                             add_timestamp=args.output_timestamp)
             print(f"[saved] {fp}")
         return
+
 
     print(f"SkyWings assistant (role={args.role}). Type 'exit' to quit.")
     session = {
@@ -107,8 +106,7 @@ def main():
         })
 
     if session["turns"] and not args.no_save:
-        name = args.output_name or "session"
-        fp = _save_json(Path(args.output_dir), name, session,
+        fp = _save_json(Path(args.output_dir), args.output_name, session,
                         add_timestamp=args.output_timestamp)
         print(f"[saved] {fp}")
 

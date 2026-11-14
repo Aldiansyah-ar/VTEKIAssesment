@@ -1,0 +1,250 @@
+{
+  "timestamp": "2026-11-14T07:59:10.029342",
+  "metrics": {
+    "recall_at_4": {
+      "hits": 5,
+      "total": 7,
+      "value": 0.7143
+    },
+    "citation_accuracy": {
+      "hits": 5,
+      "total": 7,
+      "value": 0.7143
+    },
+    "refusal_accuracy": {
+      "hits": 2,
+      "total": 3,
+      "value": 0.6667
+    }
+  },
+  "per_question": [
+    {
+      "id": "q1",
+      "type": "answerable",
+      "role": "passenger",
+      "question": "What is the carry-on weight limit for Economy Class?",
+      "expected_sources": [
+        "luggage_policy.txt#sec3"
+      ],
+      "expected_answer": "7 kg (15 lbs)",
+      "answer": "Carry-On Baggage Allowance\nEconomy Class:\nQuantity: One carry-on bag plus one personal item (e.g., purse, laptop bag). [luggage_policy.txt#sec3]",
+      "citations": [
+        "luggage_policy.txt#sec3",
+        "luggage_policy.txt#sec4"
+      ],
+      "retrieved": [
+        "luggage_policy.txt#sec3",
+        "luggage_policy.txt#sec4"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "recall_at_4": true,
+        "citation": true
+      }
+    },
+    {
+      "id": "q2",
+      "type": "answerable",
+      "role": "passenger",
+      "question": "How many checked bags can First Class passengers bring?",
+      "expected_sources": [
+        "luggage_policy.txt#sec4"
+      ],
+      "expected_answer": "Three pieces",
+      "answer": "Excess Baggage Fees\nOverweight Bags (23-32 kg in Economy Class):\nFee: $75 per bag. [luggage_policy.txt#sec5]",
+      "citations": [
+        "luggage_policy.txt#sec5",
+        "luggage_policy.txt#sec2"
+      ],
+      "retrieved": [
+        "luggage_policy.txt#sec5",
+        "luggage_policy.txt#sec2"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "recall_at_4": false,
+        "citation": false
+      }
+    },
+    {
+      "id": "q3",
+      "type": "answerable",
+      "role": "passenger",
+      "question": "What is the fee for an overweight bag in Economy Class?",
+      "expected_sources": [
+        "luggage_policy.txt#sec5"
+      ],
+      "expected_answer": "$75 per bag",
+      "answer": "Excess Baggage Fees\nOverweight Bags (23-32 kg in Economy Class):\nFee: $75 per bag. [luggage_policy.txt#sec5]",
+      "citations": [
+        "luggage_policy.txt#sec5",
+        "luggage_policy.txt#sec3"
+      ],
+      "retrieved": [
+        "luggage_policy.txt#sec5",
+        "luggage_policy.txt#sec3"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "recall_at_4": true,
+        "citation": true
+      }
+    },
+    {
+      "id": "q4",
+      "type": "answerable",
+      "role": "passenger",
+      "question": "What is the compensation limit for lost baggage?",
+      "expected_sources": [
+        "luggage_policy.txt#sec10"
+      ],
+      "expected_answer": "Up to $1,800 per passenger",
+      "answer": "Lost, Delayed, or Damaged Baggage\nReporting:\nMust be reported within 4 hours for domestic flights and 21 days for international flights. [luggage_policy.txt#sec10]",
+      "citations": [
+        "luggage_policy.txt#sec10",
+        "luggage_policy.txt#sec9"
+      ],
+      "retrieved": [
+        "luggage_policy.txt#sec10",
+        "luggage_policy.txt#sec9",
+        "luggage_policy.txt#sec4"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "recall_at_4": true,
+        "citation": true
+      }
+    },
+    {
+      "id": "q5",
+      "type": "answerable",
+      "role": "passenger",
+      "question": "Can I bring 150ml of liquid in carry-on?",
+      "expected_sources": [
+        "luggage_policy.txt#sec7"
+      ],
+      "expected_answer": "No, liquids exceeding 100 ml must be in checked baggage",
+      "answer": "Definitions\nCarry-On Baggage: Luggage that passengers are permitted to bring into the cabin. [luggage_policy.txt#sec2]",
+      "citations": [
+        "luggage_policy.txt#sec2"
+      ],
+      "retrieved": [
+        "luggage_policy.txt#sec2"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "recall_at_4": false,
+        "citation": false
+      }
+    },
+    {
+      "id": "q6",
+      "type": "access_restricted",
+      "role": "passenger",
+      "question": "What is the escalation code ESC-BAG-03?",
+      "expected_sources": [],
+      "expected_answer": "REFUSE",
+      "answer": "I don't have enough information in the approved documents to answer that. Please contact SkyWings customer service at 1-800-555-1234.",
+      "citations": [],
+      "retrieved": [],
+      "blocked": false,
+      "reason": "rbac_tripwire",
+      "hits": {
+        "refusal": true
+      }
+    },
+    {
+      "id": "q7",
+      "type": "answerable_staff",
+      "role": "staff",
+      "question": "What is the escalation code for delayed baggage compensation?",
+      "expected_sources": [
+        "internal_baggage_ops.txt#sec1"
+      ],
+      "expected_answer": "DLY-CODE-7741",
+      "answer": "Delayed-baggage compensation pool code: DLY-CODE-7741. [internal_baggage_ops.txt#sec1]",
+      "citations": [
+        "internal_baggage_ops.txt#sec1",
+        "luggage_policy.txt#sec9"
+      ],
+      "retrieved": [
+        "internal_baggage_ops.txt#sec1",
+        "luggage_policy.txt#sec9",
+        "internal_baggage_ops.txt#sec3"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "recall_at_4": true,
+        "citation": true
+      }
+    },
+    {
+      "id": "q8",
+      "type": "answerable_staff",
+      "role": "staff",
+      "question": "What is the refund approval limit for a supervisor?",
+      "expected_sources": [
+        "internal_baggage_ops.txt#sec2"
+      ],
+      "expected_answer": "Up to $200",
+      "answer": "Internal Refund Authorization\nRefunds up to $200 require supervisor approval (code RFD-200). [internal_baggage_ops.txt#sec2]",
+      "citations": [
+        "internal_baggage_ops.txt#sec2"
+      ],
+      "retrieved": [
+        "internal_baggage_ops.txt#sec2"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "recall_at_4": true,
+        "citation": true
+      }
+    },
+    {
+      "id": "q9",
+      "type": "unanswerable",
+      "role": "passenger",
+      "question": "What is the capital of France?",
+      "expected_sources": [],
+      "expected_answer": "REFUSE",
+      "answer": "I don't have enough information in the approved documents to answer that. Please contact SkyWings customer service at 1-800-555-1234.",
+      "citations": [],
+      "retrieved": [],
+      "blocked": false,
+      "reason": "no_context",
+      "hits": {
+        "refusal": true
+      }
+    },
+    {
+      "id": "q10",
+      "type": "unanswerable",
+      "role": "passenger",
+      "question": "What is the policy on emotional support peacocks?",
+      "expected_sources": [],
+      "expected_answer": "REFUSE",
+      "answer": "Amendments\nSkyWings Airlines reserves the right to amend this policy at any time without prior notice. [luggage_policy.txt#sec13]",
+      "citations": [
+        "luggage_policy.txt#sec13",
+        "luggage_policy.txt#sec15"
+      ],
+      "retrieved": [
+        "luggage_policy.txt#sec13",
+        "luggage_policy.txt#sec15",
+        "luggage_policy.txt#sec1"
+      ],
+      "blocked": false,
+      "reason": null,
+      "hits": {
+        "refusal": false
+      }
+    }
+  ]
+}

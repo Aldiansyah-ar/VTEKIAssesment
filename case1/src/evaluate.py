@@ -40,7 +40,7 @@ def main():
             "n_pos_test":      int(y_te.sum()),
         }
 
-    with open(config.OUTPUT_DIR / "metrics.json", "w") as f:
+    with open(config.OUTPUT_DIR / "evaluate.json", "w") as f:
         json.dump(results, f, indent=2)
     print(json.dumps(results, indent=2))
 

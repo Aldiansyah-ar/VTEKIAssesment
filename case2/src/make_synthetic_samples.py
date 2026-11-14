@@ -9,7 +9,6 @@ SAMPLES.mkdir(exist_ok=True)
 def _draw_invoice(path: Path, include_total: bool = True, image_only: bool = False):
     c = canvas.Canvas(str(path), pagesize=A4)
     if image_only:
-        # Draw a rectangle; no text layer
         c.rect(100, 400, 300, 200, fill=1)
         c.showPage(); c.save(); return
     y = 800

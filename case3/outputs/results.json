@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-11-13T21:10:49.794063",
+  "mode": "single_query",
+  "role": "passenger",
+  "query": "What is the carry-on weight limit for Economy Class?",
+  "result": {
+    "answer": "Carry-On Baggage Allowance\nEconomy Class:\nQuantity: One carry-on bag plus one personal item (e.g., purse, laptop bag). [luggage_policy.txt#sec3]",
+    "citations": [
+      "luggage_policy.txt#sec3",
+      "luggage_policy.txt#sec4"
+    ],
+    "blocked": false,
+    "retrieved": [
+      [
+        "luggage_policy.txt#sec3",
+        0.3152
+      ],
+      [
+        "luggage_policy.txt#sec4",
+        0.2826
+      ]
+    ]
+  }
+}

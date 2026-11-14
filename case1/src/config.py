@@ -10,6 +10,8 @@ OUTPUT_DIR = ROOT / "outputs"
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+DEFAULT_PREDICTION_OUTPUT = OUTPUT_DIR / "predict_output.json"
+
 ACCOUNTS_CSV   = DATA_DIR / "accounts.csv"
 CUSTOMERS_CSV  = DATA_DIR / "customers.csv"
 LOANS_CSV      = DATA_DIR / "loans.csv"

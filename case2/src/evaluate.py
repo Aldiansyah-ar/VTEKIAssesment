@@ -4,8 +4,10 @@ import sys
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
+
 from .pipeline import extract_invoice
 
+DEFAULT_OUT = "outputs/evaluate.json"
 NUMERIC_FIELDS = {"subtotal", "tax_total", "grand_total"}
 
 
@@ -38,10 +40,7 @@ def _field_match(pred, exp, path=""):
                 "match": False,
             })
         return out
-    if path.split(".")[-1] in NUMERIC_FIELDS or isinstance(exp, (int, float)):
-        ok = _norm(pred) == _norm(exp)
-    else:
-        ok = _norm(pred) == _norm(exp)
+    ok = _norm(pred) == _norm(exp)
     return [{
         "field": path,
         "expected": None if exp is None else str(exp),
@@ -51,8 +50,12 @@ def _field_match(pred, exp, path=""):
 
 
 def run(expected_dir="expected", samples_dir="samples",
-        out_path: str | None = None, fmt: str = "table") -> int:
-    """fmt: 'table' | 'json' | 'both'. out_path: file tujuan (auto-create folder)."""
+        out_path: str | None = DEFAULT_OUT, fmt: str = "json") -> int:
+    """fmt: 'table' | 'json' | 'both' | 'none'.
+
+    Default save to output/evaluate.json and show the table.
+    Set out_path=None for no write table.
+    """
     exp_dir = Path(expected_dir)
     smp_dir = Path(samples_dir)
 
@@ -144,7 +147,10 @@ def run(expected_dir="expected", samples_dir="samples",
     ]
     for r in reports:
         if r["status"] != "ok":
-            table_lines.append(f"| {r['sample']} | {r['status']} | - | - | {r.get('reason', r.get('error', ''))} |")
+            table_lines.append(
+                f"| {r['sample']} | {r['status']} | - | - | "
+                f"{r.get('reason', r.get('error', ''))} |"
+            )
         else:
             table_lines.append(
                 f"| {r['sample']} | {r['field_accuracy']:.3f} | "
@@ -161,13 +167,10 @@ def run(expected_dir="expected", samples_dir="samples",
     if out_path:
         p = Path(out_path)
         p.parent.mkdir(parents=True, exist_ok=True)
-        if fmt in ("json", "both") or out_path.endswith(".json"):
-            p.write_text(json.dumps(payload, indent=2, ensure_ascii=False),
-                         encoding="utf-8")
-            print(f"wrote {p}  ({p.stat().st_size} bytes)")
-        else:
-            p.write_text(table + "\n", encoding="utf-8")
-            print(f"wrote {p}")
+        p.write_text(
+            json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8",
+        )
+        print(f"\nwrote {p}  ({p.stat().st_size} bytes)")
 
     return 0 if summary["samples_error"] == 0 else 1
 
@@ -177,6 +180,16 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--expected-dir", default="expected")
     ap.add_argument("--samples-dir", default="samples")
-    ap.add_argument("--output", default=None)
+    ap.add_argument("--out", default=DEFAULT_OUT,
+                    help=f"Path output (default: {DEFAULT_OUT})")
+    ap.add_argument("--no-save", action="store_true",
+                    help="no write file, only print table")
+    ap.add_argument("--format", choices=["table", "json", "both", "none"],
+                    default="json")
     args = ap.parse_args()
-    sys.exit(run(args.expected_dir, args.samples_dir, args.out))
+    sys.exit(run(
+        args.expected_dir,
+        args.samples_dir,
+        None if args.no_save else args.out,
+        args.format,
+    ))

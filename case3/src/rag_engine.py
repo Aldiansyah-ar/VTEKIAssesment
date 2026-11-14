@@ -106,7 +106,7 @@ def validate_input(text: str, max_len: int = 2000) -> Tuple[bool, str]:
 
 
 class TFIDFRetriever:
-    """Deterministik, offline, default. Cocok untuk demo tanpa GPU."""
+    """Deterministic, offline, default. Suitable for demos without a GPU."""
     def __init__(self, chunks: List[Chunk], min_score: float = 0.12):
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.metrics.pairwise import cosine_similarity
@@ -129,7 +129,7 @@ class TFIDFRetriever:
 
 
 class STRetriever:
-    """Backend sentence-transformers (opsional, kualitas lebih tinggi)."""
+    """Sentence-transformers backend (optional, higher quality)."""
     def __init__(self, chunks: List[Chunk],
                  model_name: str = "all-MiniLM-L6-v2",
                  min_score: float = 0.20):

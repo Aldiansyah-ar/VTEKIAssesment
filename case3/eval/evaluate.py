@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 QF   = ROOT / "eval" / "questions.jsonl"
 OUT  = ROOT / "outputs"
+OUTPUT_FILENAME = "evaluate.json"          # ← nama file tetap
 
 
 def is_refusal(txt: str) -> bool:
@@ -16,22 +17,7 @@ def is_refusal(txt: str) -> bool:
     return "don't have enough information" in t or "can't process" in t
 
 
-def _save_json(output_dir: Path, name: str, payload: dict,
-               add_timestamp: bool = False) -> Path:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    safe = Path(name).name
-    if safe.endswith(".json"):
-        safe = safe[:-5]
-    if add_timestamp:
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        safe = f"{safe}_{ts}"
-    fp = output_dir / f"{safe}.json"
-    fp.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    return fp
-
-
-def run(output_dir: Path = OUT, output_name: str = "eval",
-        add_timestamp: bool = False) -> Path:
+def run(output_dir: Path = OUT) -> Path:
     retriever = build_retriever(load_corpus(DATA))
     rows = [json.loads(l) for l in QF.read_text().splitlines() if l.strip()]
 
@@ -105,8 +91,10 @@ def run(output_dir: Path = OUT, output_name: str = "eval",
         "per_question": per_question,
     }
 
-    fp = _save_json(output_dir, output_name, summary,
-                    add_timestamp=add_timestamp)
+    # Simpan otomatis ke <output_dir>/evaluate.json
+    output_dir.mkdir(parents=True, exist_ok=True)
+    fp = output_dir / OUTPUT_FILENAME
+    fp.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print("=" * 60)
     print(f"Retrieval Recall@4 : {recall_hit}/{recall_tot}")
@@ -120,16 +108,9 @@ def main():
     import argparse
     p = argparse.ArgumentParser()
     p.add_argument("--output-dir", default=str(OUT),
-                   help="direktori output (default: outputs/)")
-    p.add_argument("--output-name", default="eval",
-                   help="nama file output tanpa .json (default: eval)")
-    p.add_argument("--output-timestamp", action="store_true",
-                   help="tambahkan timestamp ke nama file agar tidak overwrite")
+                   help="output directory (default: outputs/)")
     args = p.parse_args()
-
-    run(output_dir=Path(args.output_dir),
-        output_name=args.output_name,
-        add_timestamp=args.output_timestamp)
+    run(output_dir=Path(args.output_dir))
 
 
 if __name__ == "__main__":

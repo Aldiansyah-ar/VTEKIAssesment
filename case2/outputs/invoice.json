@@ -1,0 +1,68 @@
+{
+  "invoice_number": "51109301",
+  "issue_date_raw": "03/07/2023",
+  "issue_date_iso": "2023-07-03",
+  "date_format_assumed": "DMY",
+  "currency": "INR",
+  "seller": {
+    "name": "Client:",
+    "tax_id": "27AABCT1234F1Z5",
+    "gstin": "27AABCT1234F1Z5"
+  },
+  "client": {
+    "name": "TechVision Distributors Pvt Ltd Raj Electronics Pvt Ltd",
+    "tax_id": "901-95-4704",
+    "gstin": null
+  },
+  "line_items": [
+    {
+      "no": 1,
+      "description": "Garmin Fenix 7 Solar Multisport GPS",
+      "quantity": "9.00",
+      "unit": "pcs",
+      "unit_price": "74120.00",
+      "net_worth": "667080.00",
+      "vat_rate": "10",
+      "gross_worth": "733788.00",
+      "confidence": 0.9
+    },
+    {
+      "no": 2,
+      "description": "Apple Watch Series 9 GPS 45mm",
+      "quantity": "8.00",
+      "unit": "pcs",
+      "unit_price": "52083.00",
+      "net_worth": "416664.00",
+      "vat_rate": "10",
+      "gross_worth": "458330.40",
+      "confidence": 0.9
+    }
+  ],
+  "subtotal": "1676976.00",
+  "tax_total": "167697.60",
+  "grand_total": "1844673.60",
+  "extraction_method": "regex_offline",
+  "model_version": "invoice-extractor/1.0.0",
+  "field_confidence": {
+    "invoice_number": 0.95,
+    "issue_date": 0.95,
+    "seller_name": 0.95,
+    "client_name": 0.95,
+    "seller_tax_id": 0.95,
+    "client_tax_id": 0.95,
+    "currency": 0.9,
+    "totals": 0.95
+  },
+  "overall_confidence": 0.9481,
+  "needs_review": true,
+  "review_reasons": [
+    "reconcile_subtotal_mismatch:1083744.00-1676976.00",
+    "reconcile_grand_total_mismatch:1192118.40-1844673.60",
+    "line_item_unparsed:3"
+  ],
+  "warnings": [],
+  "_meta": {
+    "latency_ms": 67.17,
+    "pages": 1
+  }
+}

@@ -107,8 +107,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True,
                     help="Path to input JSON (list of account records)")
-    ap.add_argument("--output", default=str(config.OUTPUT_DIR / "predictions.json"),
-                    help="Path to output JSON")
+    ap.add_argument("--output",
+                    default=str(config.DEFAULT_PREDICTION_OUTPUT),
+                    help="Output JSON path (default: outputs/predict_output.json)")
     args = ap.parse_args()
 
     with open(args.input, encoding="utf-8") as f:
@@ -121,11 +122,6 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
-
-    print(f"Scored {payload['n_scored']} accounts → {out_path}")
-    print(f"High risk (≥0.5): {payload['summary']['n_high_risk']}")
-    print("Top 3 predictions:")
-    print(json.dumps(payload["predictions"][:3], indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
