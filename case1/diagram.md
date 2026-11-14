@@ -1,0 +1,20 @@
+flowchart TD
+    subgraph DataSources[Data Sources]
+        A1[accounts.csv]
+        A2[customers.csv]
+        A3[loans.csv]
+        A4[transactions.csv]
+    end
+
+    A1 & A2 & A3 & A4 --> DL[data_loader.load_all]
+    DL --> DQ[data_quality.audit / clean]
+    DQ --> FE[features.build_features<br>point‑in‑time, CUTOFF_DATE]
+    FE --> LB[labels.build_proxy_label<br>quantile‑based proxy]
+    LB --> SPL[split_train_test<br>stratified holdout]
+    SPL --> TRN[train.py]
+    TRN --> BASE[LogisticRegression<br>baseline pipeline]
+    TRN --> LGBM[LightGBM classifier<br>scale_pos_weight]
+    BASE & LGBM --> EVAL[evaluate.py<br>precision, recall, F1, PR‑AUC,<br>ROC‑AUC, precision@k]
+    EVAL --> ART[fraud_model.joblib<br>model bundle]
+    ART --> API[FastAPI /score<br>batch scoring]
+    API --> OUT[scored_input.json]
